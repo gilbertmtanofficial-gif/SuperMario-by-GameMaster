@@ -1,39 +1,202 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Super Mario ESL Quest</title><style>
-:root{--m-red:#e74c3c;--m-blue:#3498db;--m-green:#2ecc71;--m-sky:#87CEEB;--m-gold:#f1c40f}
-body{font-family:'Arial Black',sans-serif;margin:0;background:var(--m-sky);color:#333;overflow:hidden;text-align:center;touch-action:manipulation}
-.screen{display:none;height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:15px;box-sizing:border-box}
-.active{display:flex!important}
-h1{color:white;text-shadow:4px 4px var(--m-red);font-size:2.5rem;margin:5px}
-.stats{font-size:1.2rem;font-weight:bold;color:#fff;text-shadow:1px 1px #000;margin-bottom:5px}
-#world{width:100%;max-width:500px;height:180px;background:linear-gradient(to bottom, #87CEEB 70%, #2ecc71 70%);border:5px solid #5d4037;border-radius:20px;position:relative;margin:10px;overflow:hidden}
-#mario{font-size:3.5rem;position:absolute;bottom:35px;left:40px;transition:0.3s}
-#q-block{width:50px;height:50px;background:var(--m-gold);border:3px solid #d4ac0d;position:absolute;top:30px;right:80px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:white;border-radius:8px;animation:float 2s infinite ease-in-out}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
-.quiz-card{width:100%;max-width:500px;background:white;padding:15px;border-radius:20px;border:5px solid var(--m-blue);box-shadow:0 8px 0 #2980b9}
-.opt{width:100%;padding:12px;margin:5px 0;border:none;border-radius:10px;background:var(--m-green);color:white;font-weight:bold;font-size:1rem;cursor:pointer}
-.controls{position:absolute;top:10px;right:10px;display:flex;gap:5px}
-.mini-btn{padding:8px 12px;font-size:0.8rem;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:white}
-.jump{transform:translateY(-70px)!important}
-</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super ESL Bros</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-<div id="scr-start" class="screen active">
-    <h1>ESL WORLD</h1>
-    <div style="font-size:5rem">🍄</div>
-    <button style="padding:15px 30px;font-size:1.2rem;background:var(--m-red);color:white;border:none;border-radius:10px;font-weight:bold;cursor:pointer" onclick="show('scr-game');start()">START GAME</button>
-</div>
+        :root {
+            --m-red: #e74c3c; --m-blue: #5c94fc; --m-green: #2ecc71; --m-gold: #f1c40f;
+        }
 
-<div id="scr-game" class="screen">
-    <div class="controls">
-        <button class="mini-btn" style="background:#7f8c8d" onclick="start()">RESET</button>
-        <button class="mini-btn" style="background:#e74c3c" onclick="location.reload()">TERMINATE</button>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            margin: 0; background: #000; color: white;
+            overflow: hidden; text-align: center; touch-action: manipulation;
+        }
+
+        .screen { display: none; height: 100vh; flex-direction: column; align-items: center; justify-content: center; }
+        .active { display: flex !important; }
+
+        /* Welcome Page Styling */
+        #scr-start { background: var(--m-blue); }
+        .title-box { border: 4px solid #000; background: var(--m-red); padding: 20px; box-shadow: 10px 10px 0 #000; }
+        .instructions { font-size: 0.7rem; line-height: 1.5; background: rgba(0,0,0,0.5); padding: 15px; margin: 20px; border-radius: 10px; }
+
+        /* Game Arena */
+        #game-world {
+            width: 100%; max-width: 600px; height: 300px;
+            background: linear-gradient(to bottom, #5c94fc 70%, #904800 70%);
+            border: 6px solid white; position: relative; overflow: hidden; margin-top: 10px;
+        }
+
+        #mario {
+            font-size: 3rem; position: absolute; bottom: 85px; left: 50px;
+            transition: 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28); z-index: 10;
+        }
+
+        .power-up-active { transform: scale(1.5); filter: drop-shadow(0 0 10px yellow); }
+        .fire-active { color: #ff4500; filter: drop-shadow(0 0 15px red); }
+
+        #q-block {
+            width: 50px; height: 50px; background: #ff9b13; border: 4px solid #000;
+            position: absolute; top: 50px; left: 250px; display: flex; align-items: center;
+            justify-content: center; font-size: 2rem; color: #fff;
+        }
+
+        .coin {
+            position: absolute; font-size: 2rem; color: gold; top: 50px; left: 260px;
+            display: none; animation: coin-pop 0.5s ease-out;
+        }
+
+        @keyframes coin-pop {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-80px); opacity: 0; }
+        }
+
+        /* Quiz UI */
+        .quiz-container {
+            width: 100%; max-width: 600px; background: #f8f8f8; color: #000;
+            padding: 15px; border-top: 8px solid #000; box-sizing: border-box;
+        }
+
+        .opt {
+            display: block; width: 100%; padding: 12px; margin: 8px 0;
+            font-family: 'Press Start 2P'; font-size: 0.6rem;
+            background: #fff; border: 4px solid #000; cursor: pointer;
+        }
+
+        .opt:active { background: #ccc; }
+
+        .stats { font-size: 0.8rem; margin: 10px; display: flex; justify-content: space-around; width: 100%; }
+        .controls { position: absolute; top: 10px; right: 10px; display: flex; gap: 10px; }
+        .mini-btn { font-family: 'Press Start 2P'; font-size: 0.5rem; padding: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- START SCREEN -->
+    <div id="scr-start" class="screen active">
+        <div class="title-box">
+            <h1 style="font-size: 1.5rem;">SUPER ESL BROS</h1>
+        </div>
+        <div class="instructions">
+            <p>INSTRUCTIONS:</p>
+            <p>1. Answer questions correctly to Jump.</p>
+            <p>2. Hit the block to get COINS.</p>
+            <p>3. 5 COINS = MUSHROOM POWER (GROW!)</p>
+            <p>4. 10 COINS = FIRE FLOWER!</p>
+        </div>
+        <button class="opt" style="width: 250px; margin: 20px;" onclick="show('scr-game');initGame()">START GAME</button>
     </div>
-    <div class="stats">COINS: <span id="coins">0</span> | LIVES: <span id="lives">3</span></div>
-    <div id="world"><div id="mario">🏃</div><div id="q-block">?</div></div>
-    <div class="quiz-card"><p id="q-text" style="margin:0 0 10px 0;font-weight:bold"></p><div id="opts"></div></div>
-</div>
 
-<script>
-const qs=[
-    {q:"A word for a person, place, or thing.", a:["Noun","Verb","Adjective","Pronoun"], c:0},
-    {q:"An action word like 'run' or 'jump'.", a:["Verb","Noun","Adverb","Noun"], c:0},
-    {q:"A word that describes a noun (color, size
+    <!-- GAME SCREEN -->
+    <div id="scr-game" class="screen">
+        <div class="controls">
+            <button class="mini-btn" onclick="initGame()">RESET</button>
+            <button class="mini-btn" style="background:red;color:white" onclick="location.reload()">STOP</button>
+        </div>
+        <div class="stats">
+            <span>WORLD 1-1</span>
+            <span>COINS:x<span id="coin-val">0</span></span>
+            <span>LIVES:x<span id="life-val">3</span></span>
+        </div>
+        
+        <div id="game-world">
+            <div id="mario">🏃</div>
+            <div id="q-block">?</div>
+            <div id="coin-anim" class="coin">💰</div>
+        </div>
+
+        <div class="quiz-container">
+            <p id="q-text" style="font-size: 0.7rem;"></p>
+            <div id="opt-box"></div>
+        </div>
+    </div>
+
+    <script>
+        const eslData = [
+            {q:"Person, place, or thing.", a:["Noun","Verb","Adjective","Adverb"], c:0},
+            {q:"Action word (Run, Eat).", a:["Verb","Noun","Pronoun","Preposition"], c:0},
+            {q:"Describes a noun (Big, Red).", a:["Adjective","Verb","Adverb","Noun"], c:0},
+            {q:"Replaces a name (He, She, It).", a:["Pronoun","Verb","Noun","Article"], c:0},
+            {q:"A position word (On, Under).", a:["Preposition","Verb","Adjective","Noun"], c:0},
+            {q:"Shows strong feeling (!).", a:["Exclamation Point","Comma","Period","Question Mark"], c:0},
+            {q:"More than one person/thing.", a:["Plural","Singular","Verb","Tense"], c:0},
+            {q:"A story about someone's life.", a:["Biography","Noun","Poem","Title"], c:0},
+            {q:"Opposite of 'Happy'.", a:["Sad","Angry","Joyful","Excited"], c:0},
+            {q:"Used to ask something (?).", a:["Question Mark","Period","Comma","Semicolon"], c:0}
+        ];
+
+        let score = 0, lives = 3, isJumping = false;
+
+        function show(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function initGame() {
+            score = 0; lives = 3;
+            updateUI();
+            ask();
+        }
+
+        function ask() {
+            const qObj = eslData[Math.floor(Math.random() * eslData.length)];
+            document.getElementById('q-text').innerText = qObj.q;
+            const box = document.getElementById('opt-box');
+            box.innerHTML = '';
+
+            let choices = qObj.a.map((t, i) => ({ t, correct: i === qObj.c }));
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(opt => {
+                const b = document.createElement('button');
+                b.className = 'opt';
+                b.innerText = opt.t;
+                b.onclick = () => check(opt.correct);
+                box.appendChild(b);
+            });
+        }
+
+        function check(isCorrect) {
+            if (isCorrect) {
+                marioJump();
+                score++;
+                if (score === 5) { alert("POWER UP! MARIO GREW!"); document.getElementById('mario').classList.add('power-up-active'); }
+                if (score === 10) { alert("FIRE POWER!"); document.getElementById('mario').classList.add('fire-active'); }
+            } else {
+                lives--;
+                if (lives <= 0) { alert("GAME OVER!"); location.reload(); }
+            }
+            updateUI();
+            ask();
+        }
+
+        function marioJump() {
+            if (isJumping) return;
+            isJumping = true;
+            const m = document.getElementById('mario');
+            const c = document.getElementById('coin-anim');
+            m.style.bottom = "150px";
+            
+            setTimeout(() => {
+                c.style.display = "block";
+                setTimeout(() => { c.style.display = "none"; }, 500);
+            }, 100);
+
+            setTimeout(() => {
+                m.style.bottom = "85px";
+                isJumping = false;
+            }, 300);
+        }
+
+        function updateUI() {
+            document.getElementById('coin-val').innerText = score;
+            document.getElementById('life-val').innerText = lives;
+        }
+    </script>
+</body>
+</html>
