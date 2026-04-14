@@ -3,82 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Super ESL World</title>
+    <title>Super ESL World - Grade 5</title>
     <style>
-        :root { --m-blue: #5c94fc; --m-red: #e74c3c; --m-gold: #f1c40f; --m-green: #2ecc71; }
-        body { margin: 0; background: #000; color: white; font-family: 'Arial Black', sans-serif; text-align: center; overflow: hidden; touch-action: manipulation; }
+        :root { --sky: #5c94fc; --m-red: #e74c3c; --m-gold: #f1c40f; }
+        body { margin: 0; background: #000; color: white; font-family: 'Arial Black', sans-serif; overflow: hidden; touch-action: manipulation; }
         
-        .screen { display: none; height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        /* Welcoming Screen - Mario Theme */
+        .screen { display: none; height: 100vh; flex-direction: column; align-items: center; justify-content: center; }
         .active { display: flex !important; }
-
-        /* Welcome Screen */
-        #scr-start { background: var(--m-blue); border: 10px solid #000; }
-        .mario-title { font-size: 2.5rem; color: var(--m-red); text-shadow: 4px 4px #000; background: white; padding: 10px 20px; border: 5px solid #000; }
-        .instructions { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; font-size: 0.9rem; margin: 20px 0; line-height: 1.4; }
-
-        /* Arena */
-        #world { width: 100%; max-width: 500px; height: 200px; background: linear-gradient(to bottom, #5c94fc 70%, #904800 70%); border: 5px solid white; position: relative; overflow: hidden; border-radius: 15px; }
-        #mario { font-size: 3rem; position: absolute; bottom: 40px; left: 40px; transition: 0.2s; z-index: 5; }
-        #q-block { width: 50px; height: 50px; background: #ff9b13; border: 3px solid #000; position: absolute; top: 40px; left: 220px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; font-weight: bold; border-radius: 5px; }
+        #scr-start { background: var(--sky); border: 10px solid #904800; }
+        .title-banner { background: var(--m-red); padding: 20px; border: 5px solid white; box-shadow: 10px 10px 0 #000; margin-bottom: 20px; }
         
-        /* Growth States */
-        .big { transform: scale(1.6); }
-        .fire { transform: scale(1.6); filter: drop-shadow(0 0 10px red); }
+        /* Real Game Arena */
+        #stage { width: 100%; max-width: 600px; height: 260px; background: var(--sky); position: relative; border: 4px solid white; overflow: hidden; margin-top: 10px; }
+        .ground { position: absolute; bottom: 0; width: 100%; height: 40px; background: #904800; border-top: 4px solid #2ecc71; }
+        
+        /* Mario & Objects */
+        #mario { font-size: 3rem; position: absolute; bottom: 40px; left: 50px; transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); z-index: 10; }
+        #block { width: 50px; height: 50px; background: #ff9b13; border: 3px solid #000; position: absolute; top: 60px; left: 250px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; border-radius: 4px; }
+        .coin-pop { position: absolute; font-size: 2rem; left: 260px; top: 60px; display: none; animation: pop 0.5s ease-out; }
+        
+        @keyframes pop { 0% { transform: translateY(0); opacity:1; } 100% { transform: translateY(-100px); opacity:0; } }
+        
+        /* Character States */
+        .mario-big { transform: scale(1.6); filter: drop-shadow(0 0 5px yellow); }
+        .mario-fire { transform: scale(1.6); filter: drop-shadow(0 0 15px red); }
 
-        /* Quiz UI */
-        .quiz-container { width: 100%; max-width: 500px; background: white; color: black; padding: 15px; border-radius: 15px; border: 5px solid var(--m-red); margin-top: 10px; }
-        .opt { width: 100%; padding: 12px; margin: 5px 0; border: 3px solid #000; border-radius: 8px; background: var(--m-green); color: white; font-weight: bold; font-size: 1rem; cursor: pointer; }
-
-        /* Controls */
-        .top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-around; font-size: 1rem; color: gold; z-index: 100; }
-        .game-buttons { position: absolute; bottom: 10px; display: flex; gap: 10px; }
-        .mini-btn { padding: 5px 15px; background: #7f8c8d; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        /* Grade 5 ESL Quiz Box */
+        .quiz-ui { width: 100%; max-width: 600px; background: white; color: black; padding: 15px; border-radius: 0 0 20px 20px; border: 6px solid #000; box-sizing: border-box; }
+        .opt { width: 100%; padding: 12px; margin: 5px 0; border: 3px solid #000; border-radius: 10px; background: #2ecc71; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; }
+        
+        .nav-btn { position: absolute; top: 10px; right: 10px; padding: 8px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: WELCOME -->
+    <!-- WELCOME PAGE -->
     <div id="scr-start" class="screen active">
-        <div class="mario-title">SUPER ESL BROS</div>
-        <div class="instructions">
-            <p>1. Answer correctly to JUMP.</p>
-            <p>2. Hit the block to get COINS.</p>
-            <p>3. 5 COINS = 🍄 MUSHROOM (BIG!)</p>
-            <p>4. 10 COINS = 🔥 FIRE FLOWER!</p>
+        <div class="title-banner"><h1>SUPER ESL BROS.</h1></div>
+        <div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px; margin-bottom:20px; font-size:0.8rem;">
+            <p>1. Answer the Grade 5 ESL Question.</p>
+            <p>2. Correct Answer = Mario Jumps & Hits Block.</p>
+            <p>3. 5 COINS = MUSHROOM POWER (GROW BIG!)</p>
+            <p>4. 10 COINS = FIRE POWER!</p>
         </div>
-        <button class="opt" style="background:var(--m-red); width: 200px;" onclick="startGame()">START GAME</button>
+        <button class="opt" style="width:250px; background:var(--m-red)" onclick="init()">START GAME</button>
     </div>
 
-    <!-- SCREEN 2: GAMEPLAY -->
+    <!-- GAMEPLAY PAGE -->
     <div id="scr-game" class="screen">
-        <div class="top-ui">
-            <span>COINS: <span id="coin-val">0</span></span>
-            <span>LIVES: <span id="life-val">3</span></span>
-        </div>
+        <button class="nav-btn" style="right:110px; background:#7f8c8d; color:white;" onclick="init()">RESET</button>
+        <button class="nav-btn" style="background:var(--m-red); color:white;" onclick="location.reload()">TERMINATE</button>
 
-        <div id="world">
+        <div style="font-size:1.2rem; color:gold; margin-bottom:10px;">COINS: <span id="c-count">0</span> | LIVES: <span id="l-count">3</span></div>
+        
+        <div id="stage">
             <div id="mario">🏃</div>
-            <div id="q-block">?</div>
+            <div id="block">?</div>
+            <div id="coin" class="coin-pop">💰</div>
+            <div class="ground"></div>
         </div>
 
-        <div class="quiz-container">
-            <p id="q-text" style="font-weight:bold;"></p>
-            <div id="opt-box"></div>
-        </div>
-
-        <div class="game-buttons">
-            <button class="mini-btn" onclick="resetGame()">RESET</button>
-            <button class="mini-btn" style="background:var(--m-red)" onclick="location.reload()">TERMINATE</button>
+        <div class="quiz-ui">
+            <p id="q-txt" style="font-weight:bold; margin-bottom:10px;"></p>
+            <div id="opt-wrap"></div>
         </div>
     </div>
 
     <script>
-        const eslQuestions = [
-            {q:"A word for a person, place, or thing.", a:["Noun","Verb","Adjective","Pronoun"], c:0},
-            {q:"An action word like 'run' or 'jump'.", a:["Verb","Noun","Adverb","Adjective"], c:0},
-            {q:"Describes a noun (Big, Small, Blue).", a:["Adjective","Verb","Pronoun","Noun"], c:0},
-            {q:"Replaces a name (He, She, It).", a:["Pronoun","Verb","Noun","Article"], c:0},
-            {q:"A position word (On, Under, In).", a:["Preposition","Verb","Adjective","Noun"], c:0},
-            {q:"Opposite of 'Happy'.", a:["Sad","Angry","Joyful","Fast"], c:0},
-            {q:"A word used to join sentences (And, But).", a:["Conjunction","Verb","Noun","Adjective"], c:0},
-            {q:
+        // GRADE 5 ESL TOPICS: Grammar, Vocabulary, Tenses, Punctuation
+        const grade5Qs = [
+            {q:"Which word is an Adverb?", a:["Quickly","Green","Apple","Jump"], c:0},
+            {q:"Choose the correct past tense: 'He ____ to school yesterday.'", a:["walked","walk","walking","walks"], c:0},
+            {q:"Find the Synonym for 'Angry':", a:["Furious","Happy","Tired","Calm"], c:0},
+            {q:"Which sentence uses a proper noun?", a:["I visited London.","I like the city.","He is a boy.","We played a game."], c:0},
+            {q:"Choose the correct plural: 'The ____ are playing.'", a:["children","childs","childrens","childes"], c:0},
+            {q:"Which is a COMPOUND word?", a:["Raincoat","Running","Beautiful","Apple"], c:0},
+            {q:"Identify the Subject: 'The big dog barked.'", a:["The big dog","Barked","Dog","Big"], c:0},
+            {q:"Opposite of 'Difficult':", a:["Easy","Hard","Soft","Large"], c:0},
+            {q:"Which word needs a Capital Letter?", a:["vietnam","apple","running","table"], c:0},
+            {q:"Choose the correct article: 'I saw ___ elephant.'", a:["an","a","the","some"], c:0}
+        ];
+
+        let coins=0, lives=3, isJumping=false;
+
+        function show(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function init() {
+            coins=0; lives=3;
+            document.getElementById('mario').className = '';
+            document.getElementById('mario').innerText = '🏃';
+            updateUI();
+            show('scr-game');
+            ask();
+        }
+
+        function ask() {
+            if(lives <= 0) { alert("Game Over! Try again."); init(); return; }
+            const qObj = grade5Qs[Math.floor(Math.random()*grade5Qs.length)];
+            document.getElementById('q-txt').innerText = qObj.q;
+            const wrap = document.getElementById('opt-wrap');
+            wrap.innerHTML = '';
+
+            let choices = qObj.a.map((t, i) => ({ t, correct: i === qObj.c }));
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(o => {
+                const b = document.createElement('button');
+                b.className = 'opt';
+                b.innerText = o.t;
+                b.onclick = () => {
+                    if(o.correct) {
+                        jump();
+                        coins++;
+                        if(coins === 5) { alert("MUSHROOM! Mario Grew!"); document.getElementById('mario').classList.add('mario-big'); }
+                        if(coins === 10) { alert("FIRE FLOWER!"); document.getElementById('mario').classList.add('mario-fire'); document.getElementById('mario').innerText = '🔥'; }
+                    } else {
+                        lives--;
+                        document.body.style.backgroundColor = "red";
+                        setTimeout(() => document.body.style.backgroundColor = "black", 200);
+                    }
+                    updateUI();
+                    setTimeout(ask, 600);
+                };
+                wrap.appendChild(b);
+            });
+        }
+
+        function jump() {
+            if(isJumping) return;
+            isJumping = true;
+            const m = document.getElementById('mario');
+            const c = document.getElementById('coin');
+            m.style.bottom = "120px";
+            setTimeout(() => { 
+                c.style.display = "block"; 
+                setTimeout(() => c.style.display = "none", 500);
+            }, 100);
+            setTimeout(() => { m.style.bottom = "40px"; isJumping = false; }, 300);
+        }
+
+        function updateUI() {
+            document.getElementById('c-count').innerText = coins;
+            document.getElementById('l-count').innerText = lives;
+        }
+    </script>
+</body>
+</html>
