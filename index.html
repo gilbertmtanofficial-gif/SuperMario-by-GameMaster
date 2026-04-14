@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Super Mario ESL Quest</title><style>
+:root{--m-red:#e74c3c;--m-blue:#3498db;--m-green:#2ecc71;--m-sky:#87CEEB;--m-gold:#f1c40f}
+body{font-family:'Arial Black',sans-serif;margin:0;background:var(--m-sky);color:#333;overflow:hidden;text-align:center;touch-action:manipulation}
+.screen{display:none;height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:15px;box-sizing:border-box}
+.active{display:flex!important}
+h1{color:white;text-shadow:4px 4px var(--m-red);font-size:2.5rem;margin:5px}
+.stats{font-size:1.2rem;font-weight:bold;color:#fff;text-shadow:1px 1px #000;margin-bottom:5px}
+#world{width:100%;max-width:500px;height:180px;background:linear-gradient(to bottom, #87CEEB 70%, #2ecc71 70%);border:5px solid #5d4037;border-radius:20px;position:relative;margin:10px;overflow:hidden}
+#mario{font-size:3.5rem;position:absolute;bottom:35px;left:40px;transition:0.3s}
+#q-block{width:50px;height:50px;background:var(--m-gold);border:3px solid #d4ac0d;position:absolute;top:30px;right:80px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:white;border-radius:8px;animation:float 2s infinite ease-in-out}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.quiz-card{width:100%;max-width:500px;background:white;padding:15px;border-radius:20px;border:5px solid var(--m-blue);box-shadow:0 8px 0 #2980b9}
+.opt{width:100%;padding:12px;margin:5px 0;border:none;border-radius:10px;background:var(--m-green);color:white;font-weight:bold;font-size:1rem;cursor:pointer}
+.controls{position:absolute;top:10px;right:10px;display:flex;gap:5px}
+.mini-btn{padding:8px 12px;font-size:0.8rem;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:white}
+.jump{transform:translateY(-70px)!important}
+</style></head><body>
+
+<div id="scr-start" class="screen active">
+    <h1>ESL WORLD</h1>
+    <div style="font-size:5rem">🍄</div>
+    <button style="padding:15px 30px;font-size:1.2rem;background:var(--m-red);color:white;border:none;border-radius:10px;font-weight:bold;cursor:pointer" onclick="show('scr-game');start()">START GAME</button>
+</div>
+
+<div id="scr-game" class="screen">
+    <div class="controls">
+        <button class="mini-btn" style="background:#7f8c8d" onclick="start()">RESET</button>
+        <button class="mini-btn" style="background:#e74c3c" onclick="location.reload()">TERMINATE</button>
+    </div>
+    <div class="stats">COINS: <span id="coins">0</span> | LIVES: <span id="lives">3</span></div>
+    <div id="world"><div id="mario">🏃</div><div id="q-block">?</div></div>
+    <div class="quiz-card"><p id="q-text" style="margin:0 0 10px 0;font-weight:bold"></p><div id="opts"></div></div>
+</div>
+
+<script>
+const qs=[
+    {q:"A word for a person, place, or thing.", a:["Noun","Verb","Adjective","Pronoun"], c:0},
+    {q:"An action word like 'run' or 'jump'.", a:["Verb","Noun","Adverb","Noun"], c:0},
+    {q:"A word that describes a noun (color, size
